@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+	
+	<context:property-placeholder location="classpath:mybatis/config/database.properties"/>
+<!-- 
+	 <bean id="dataSource"
+		class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"
+		p:driverClassName="com.mysql.cj.jdbc.Driver" 
+		p:url="jdbc:mysql://sheerhouse.cnbxgqzuzxqm.us-east-2.rds.amazonaws.com:3306/sheerhouse?useSSL=false"
+		p:username="admin" p:password="sheerhouse1234"/>
+ -->
+ 	<bean id="dataSource"
+		class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close"
+		p:driverClassName="${jdbc.driver}" 
+		p:url="${jdbc.url}"
+		p:username="${jdbc.username}" p:password="${jdbc.password}"/>
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="dataSource"
+		p:configLocation="classpath:mybatis/config/mybatis-config.xml"></bean>
+
+	 <!--트랜잭션 관리자 -->
+	<bean id="transactionManager" 
+	class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+	p:dataSource-ref="dataSource"></bean>
+	
+	<!-- 트랜잭션 어노테이션 스캔 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<mybatis-spring:scan base-package="com.main.sheerhouse.mapper" />
+
+
+
+</beans>
